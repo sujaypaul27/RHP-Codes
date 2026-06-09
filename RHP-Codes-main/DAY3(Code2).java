@@ -1,37 +1,43 @@
-//LC(200. Number of Islands)
-
+//LC(329. Longest Increasing Path in a Matrix)
 class Solution {
-    final private int diff[][]={{-1,0},{1,0},{0,1},{0,-1}};
-
-    public void dfs(char grid[][],int row,int col,int R,int C)
+    final int diff[][]={{-1,0},{1,0},{0,1},{0,-1}};
+    private int dfs(int[][] matrics,int[][]dp,int R,int C, int row,int col)
     {
-        grid[row][col]='0';
+        if(dp[row][col]!=0)
+        {
+            return dp[row][col];//coz alredy calculated and stored
+        }
+        int adjmax=0;
         for(int i=0;i<4;i++)
         {
-            int ar=row+diff[i][0];
-            int ac=col+diff[i][1];
-            if(ar>=0 && ar<R && ac>=0 && ac < C && grid[ar][ac]=='1')
+            int nr=row+diff[i][0];
+            int nc=col+diff[i][1];
+            if(nr>=0 && nr<R && nc>=0 && nc <C)
             {
-                dfs(grid,ar,ac,R,C);
+                if(matrics[nr][nc]>matrics[row][col])
+                {
+                    adjmax=Math.max(adjmax,dfs(matrics,dp,R,C,nr,nc));
+                }
             }
         }
+        dp[row][col]=1+adjmax;
+        return 1+adjmax;
     }
-
-    public int numIslands(char[][] grid) {
-        int R=grid.length;
-        int C=grid[0].length;
-        int isIsland=0;
+    public int longestIncreasingPath(int[][] matrix) {
+        int R=matrix.length;
+        int C=matrix[0].length;
+        int maxlength=1;
+        int[][] dp=new int [R][C];
         for(int row=0;row<R;row++)
         {
             for(int col=0;col<C;col++)
             {
-                if(grid[row][col]=='1')
+                if(dp[row][col]==0)
                 {
-                    isIsland++;
-                    dfs(grid,row,col,R,C);
+                    maxlength=Math.max(maxlength,dfs(matrix,dp,R,C,row,col));
                 }
             }
         }
-        return isIsland;
+        return maxlength;
     }
 }
