@@ -62,5 +62,5 @@ public class Main {
 
             System.out.println(prefix[b] - prefix[a - 1]);
         }
-    }//....
+    }//......////
 }// problem link : https://codeforces.com/contest/816/problem/B
