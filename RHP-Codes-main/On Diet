@@ -1,0 +1,57 @@
+import java.util.*;
+
+public class Main {
+
+    static class Food {
+        int calories;
+        int cost;
+
+        Food(int calories, int cost) {
+            this.calories = calories;
+            this.cost = cost;
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        int n = sc.nextInt();
+        int k = sc.nextInt();
+
+        Food[] foods = new Food[n];
+
+        for (int i = 0; i < n; i++) {
+            int calories = sc.nextInt();
+            int cost = sc.nextInt();
+
+            foods[i] = new Food(calories, cost);
+        }
+
+        // Best calorie/cost ratio first
+        Arrays.sort(foods, (a, b) -> {
+            double ratioA = (double) a.calories / a.cost;
+            double ratioB = (double) b.calories / b.cost;
+
+            return Double.compare(ratioB, ratioA);
+        });
+
+        int calories = 0;
+        long totalCost = 0;
+
+        for (Food food : foods) {
+
+            if (calories >= k) {
+                break;
+            }
+
+            calories += food.calories;
+            totalCost += food.cost;
+        }
+
+        if (calories >= k) {
+            System.out.println(totalCost);
+        } else {
+            System.out.println(-1);
+        }
+    }
+}
