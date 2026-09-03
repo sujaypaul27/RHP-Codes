@@ -1,0 +1,46 @@
+import java.io.*;
+import java.util.*;
+
+public class Main {
+
+    public static void main(String[] args) throws Exception {
+
+        BufferedReader br =
+                new BufferedReader(new InputStreamReader(System.in));
+
+        StringTokenizer st =
+                new StringTokenizer(br.readLine());
+
+        int N = Integer.parseInt(st.nextToken());
+        int Q = Integer.parseInt(st.nextToken());
+
+        String S = br.readLine();
+
+        int offset = 0;
+
+        StringBuilder ans = new StringBuilder();
+
+        while (Q-- > 0) {
+
+            st = new StringTokenizer(br.readLine());
+
+            int type = Integer.parseInt(st.nextToken());
+            int x = Integer.parseInt(st.nextToken());
+
+            if (type == 1) {
+
+                // Move last x characters to the front
+                offset = (offset - x % N + N) % N;
+
+            } else {
+
+                // x is 1-indexed
+                int index = (offset + x - 1) % N;
+
+                ans.append(S.charAt(index)).append('\n');
+            }
+        }
+
+        System.out.print(ans);
+    }
+}
