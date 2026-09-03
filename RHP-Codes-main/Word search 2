@@ -1,0 +1,115 @@
+import java.util.*;
+
+class Solution {
+
+    static class TrieNode {
+        TrieNode[] children = new TrieNode[26];
+
+        // Stores the complete word when this node represents
+        // the end of a word.
+        String word;
+    }
+
+    private final int[] dr = {-1, 1, 0, 0};
+    private final int[] dc = {0, 0, -1, 1};
+
+    private char[][] board;
+    private int rows, cols;
+
+    public List<String> findWords(char[][] board, String[] words) {
+
+        this.board = board;
+        rows = board.length;
+        cols = board[0].length;
+
+        List<String> result = new ArrayList<>();
+
+        // Build Trie
+        TrieNode root = new TrieNode();
+
+        for (String word : words) {
+            insert(root, word);
+        }
+
+        // DFS from every cell
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+
+                dfs(r, c, root, result);
+            }
+        }
+
+        return result;
+    }
+
+    private void insert(TrieNode root, String word) {
+
+        TrieNode curr = root;
+
+        for (char ch : word.toCharArray()) {
+
+            int index = ch - 'a';
+
+            if (curr.children[index] == null) {
+                curr.children[index] = new TrieNode();
+            }
+
+            curr = curr.children[index];
+        }
+
+        curr.word = word;
+    }
+
+    private void dfs(
+        int r,
+        int c,
+        TrieNode node,
+        List<String> result
+    ) {
+
+        // Boundary check
+        if (r < 0 || r >= rows ||
+            c < 0 || c >= cols) {
+            return;
+        }
+
+        char ch = board[r][c];
+
+        // Already visited
+        if (ch == '#') {
+            return;
+        }
+
+        TrieNode next = node.children[ch - 'a'];
+
+        // No word in Trie starts with this path
+        if (next == null) {
+            return;
+        }
+
+        // Found a complete word
+        if (next.word != null) {
+            result.add(next.word);
+
+            // Prevent duplicate result
+            next.word = null;
+        }
+
+        // Mark visited
+        board[r][c] = '#';
+
+        // Explore 4 directions
+        for (int d = 0; d < 4; d++) {
+
+            dfs(
+                r + dr[d],
+                c + dc[d],
+                next,
+                result
+            );
+        }
+
+        // Backtrack
+        board[r][c] = ch;
+    }
+}
