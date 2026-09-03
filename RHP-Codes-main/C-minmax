@@ -1,0 +1,56 @@
+import java.io.*;
+import java.util.*;
+
+public class Main {
+
+    public static void main(String[] args) throws Exception {
+        BufferedReader br =
+                new BufferedReader(new InputStreamReader(System.in));
+
+        int Q = Integer.parseInt(br.readLine());
+
+        // value -> frequency
+        TreeMap<Long, Long> map = new TreeMap<>();
+
+        StringBuilder out = new StringBuilder();
+
+        while (Q-- > 0) {
+
+            StringTokenizer st =
+                    new StringTokenizer(br.readLine());
+
+            int type = Integer.parseInt(st.nextToken());
+
+            if (type == 1) {
+                // Add x
+                long x = Long.parseLong(st.nextToken());
+
+                map.put(x, map.getOrDefault(x, 0L) + 1);
+
+            } else if (type == 2) {
+                // Remove min(c, current frequency)
+                long x = Long.parseLong(st.nextToken());
+                long c = Long.parseLong(st.nextToken());
+
+                if (map.containsKey(x)) {
+                    long remaining = map.get(x) - c;
+
+                    if (remaining <= 0) {
+                        map.remove(x);
+                    } else {
+                        map.put(x, remaining);
+                    }
+                }
+
+            } else {
+                // Maximum - Minimum
+                long min = map.firstKey();
+                long max = map.lastKey();
+
+                out.append(max - min).append('\n');
+            }
+        }
+
+        System.out.print(out);
+    }
+}
