@@ -1,0 +1,79 @@
+import java.io.*;
+import java.util.*;
+
+public class Main {
+
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        int t = Integer.parseInt(br.readLine());
+
+        while (t-- > 0) {
+
+            String a = br.readLine();
+            String b = br.readLine();
+
+            int n = a.length();
+            int m = b.length();
+
+            // Prefix sums modulo 10
+            int[] pa = new int[n];
+            int[] pb = new int[m];
+
+            int sumA = 0;
+            for (int i = 0; i < n; i++) {
+                sumA = (sumA + (a.charAt(i) - '0')) % 10;
+                pa[i] = sumA;
+            }
+
+            int sumB = 0;
+            for (int i = 0; i < m; i++) {
+                sumB = (sumB + (b.charAt(i) - '0')) % 10;
+                pb[i] = sumB;
+            }
+
+            // Final total sums must be equal
+            if (pa[n - 1] != pb[m - 1]) {
+                System.out.println(-1);
+                continue;
+            }
+
+            // Use the shorter string for DP columns
+            if (m > n) {
+                int[] temp = pa;
+                pa = pb;
+                pb = temp;
+
+                int tempLen = n;
+                n = m;
+                m = tempLen;
+            }
+
+            // LCS with O(m) memory
+            int[] prev = new int[m + 1];
+            int[] curr = new int[m + 1];
+
+            for (int i = 1; i <= n; i++) {
+
+                for (int j = 1; j <= m; j++) {
+
+                    if (pa[i - 1] == pb[j - 1]) {
+                        curr[j] = prev[j - 1] + 1;
+                    } else {
+                        curr[j] = Math.max(prev[j], curr[j - 1]);
+                    }
+                }
+
+                // Swap rows
+                int[] temp = prev;
+                prev = curr;
+                curr = temp;
+
+                // Clear current row
+                Arrays.fill(curr, 0);
+            }
+
+            System.out.println(prev[m]);
+        }
+    }
+}
