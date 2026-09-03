@@ -1,0 +1,50 @@
+import java.io.*;
+import java.util.*;
+
+public class Main {
+
+    public static void main(String[] args) throws Exception {
+
+        BufferedReader br =
+                new BufferedReader(new InputStreamReader(System.in));
+
+        int n = Integer.parseInt(br.readLine());
+
+        int[] a = new int[n];
+
+        StringTokenizer st =
+                new StringTokenizer(br.readLine());
+
+        for (int i = 0; i < n; i++) {
+            a[i] = Integer.parseInt(st.nextToken());
+        }
+
+        // last[x] = last position where x appeared
+        // -1 means x has not appeared yet
+        int[] last = new int[n + 1];
+        Arrays.fill(last, -1);
+
+        long dp = 0;
+        long answer = 0;
+
+        for (int i = 0; i < n; i++) {
+
+            int x = a[i];
+
+            // Number of subarrays ending at i
+            // where x is a new distinct value
+            long added = i - last[x];
+
+            dp += added;
+
+            // Add sum of distinct counts of all
+            // subarrays ending at i
+            answer += dp;
+
+            // Update last occurrence
+            last[x] = i;
+        }
+
+        System.out.println(answer);
+    }
+}
