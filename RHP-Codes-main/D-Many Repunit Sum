@@ -1,0 +1,47 @@
+import java.io.*;
+import java.util.*;
+
+public class Main {
+
+    static final long MOD = 998244353L;
+
+    static long modPow(long base, long exp) {
+        long result = 1;
+
+        while (exp > 0) {
+            if ((exp & 1) == 1) {
+                result = result * base % MOD;
+            }
+
+            base = base * base % MOD;
+            exp >>= 1;
+        }
+
+        return result;
+    }
+
+    public static void main(String[] args) throws Exception {
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        long N = Long.parseLong(br.readLine());
+
+        // Modular inverse of 9
+        long inv9 = modPow(9, MOD - 2);
+
+        // 10^N mod MOD
+        long pow10 = modPow(10, N);
+
+        // 10 + 10^2 + ... + 10^N
+        long geometricSum =
+                10 * ((pow10 - 1 + MOD) % MOD) % MOD
+                * inv9 % MOD;
+
+        // Sum of repunits
+        long answer =
+                (geometricSum - (N % MOD) + MOD) % MOD
+                * inv9 % MOD;
+
+        System.out.println(answer);
+    }
+}
