@@ -1,0 +1,49 @@
+import java.util.*;
+
+public class Main {
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        int N = sc.nextInt();
+        int M = sc.nextInt();
+
+        int[] masks = new int[M];
+
+        // Convert every set into a bitmask
+        for (int i = 0; i < M; i++) {
+            int A = sc.nextInt();
+
+            for (int j = 0; j < A; j++) {
+                int x = sc.nextInt();
+
+                // Element x -> bit (x - 1)
+                masks[i] |= 1 << (x - 1);
+            }
+        }
+
+        int fullMask = (1 << N) - 1;
+        int answer = 0;
+
+        // Enumerate all subsets of M sets
+        for (int subset = 0; subset < (1 << M); subset++) {
+
+            int covered = 0;
+
+            for (int i = 0; i < M; i++) {
+
+                // Check if set i is selected
+                if ((subset & (1 << i)) != 0) {
+                    covered |= masks[i];
+                }
+            }
+
+            // Not all elements are covered
+            if (covered != fullMask) {
+                answer++;
+            }
+        }
+
+        System.out.println(answer);
+    }
+}
