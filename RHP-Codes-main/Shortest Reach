@@ -1,0 +1,64 @@
+import java.io.*;
+import java.util.*;
+
+public class Solution {
+
+    public static List<Integer> shortestReach(
+            int n,
+            List<List<Integer>> edges,
+            int s) {
+
+        // Adjacency list
+        List<List<Integer>> graph = new ArrayList<>();
+
+        for (int i = 0; i <= n; i++) {
+            graph.add(new ArrayList<>());
+        }
+
+        // Build graph
+        for (List<Integer> edge : edges) {
+            int u = edge.get(0);
+            int v = edge.get(1);
+
+            graph.get(u).add(v);
+            graph.get(v).add(u);
+        }
+
+        int[] distance = new int[n + 1];
+        Arrays.fill(distance, -1);
+
+        Queue<Integer> queue = new ArrayDeque<>();
+
+        distance[s] = 0;
+        queue.offer(s);
+
+        // BFS
+        while (!queue.isEmpty()) {
+
+            int current = queue.poll();
+
+            for (int next : graph.get(current)) {
+
+                if (distance[next] != -1) {
+                    continue;
+                }
+
+                distance[next] = distance[current] + 6;
+                queue.offer(next);
+            }
+        }
+
+        List<Integer> answer = new ArrayList<>();
+
+        for (int node = 1; node <= n; node++) {
+
+            if (node == s) {
+                continue;
+            }
+
+            answer.add(distance[node]);
+        }
+
+        return answer;
+    }
+}
