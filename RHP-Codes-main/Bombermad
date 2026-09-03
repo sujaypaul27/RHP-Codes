@@ -1,0 +1,137 @@
+import java.io.*;
+import java.util.*;
+
+public class Main {
+
+    static int H, W;
+    static long K;
+    static char[][] grid;
+
+    static final int[] DR = {-1, 1, 0, 0};
+    static final int[] DC = {0, 0, -1, 1};
+
+    public static void main(String[] args) throws Exception {
+
+        BufferedReader br =
+                new BufferedReader(new InputStreamReader(System.in));
+
+        StringTokenizer st =
+                new StringTokenizer(br.readLine());
+
+        H = Integer.parseInt(st.nextToken());
+        W = Integer.parseInt(st.nextToken());
+        K = Long.parseLong(st.nextToken());
+
+        grid = new char[H][W];
+
+        for (int i = 0; i < H; i++) {
+            grid[i] = br.readLine().toCharArray();
+        }
+
+        // rowHasBomb[i] = whether row i contains '#'
+        boolean[] rowHasBomb = new boolean[H];
+
+        // colHasBomb[j] = whether column j contains '#'
+        boolean[] colHasBomb = new boolean[W];
+
+        for (int r = 0; r < H; r++) {
+            for (int c = 0; c < W; c++) {
+
+                if (grid[r][c] == '#') {
+                    rowHasBomb[r] = true;
+                    colHasBomb[c] = true;
+                }
+            }
+        }
+
+        /*
+         * dist[r][c] = shortest distance from
+         * (r,c) to any safe cell.
+         *
+         * -1 = not visited
+         */
+        int[][] dist = new int[H][W];
+
+        for (int[] row : dist) {
+            Arrays.fill(row, -1);
+        }
+
+        ArrayDeque<Integer> queue = new ArrayDeque<>();
+
+        // Add ALL safe cells as BFS sources
+        for (int r = 0; r < H; r++) {
+            if (rowHasBomb[r]) {
+                continue;
+            }
+
+            for (int c = 0; c < W; c++) {
+
+                if (colHasBomb[c]) {
+                    continue;
+                }
+
+                if (grid[r][c] == '.') {
+                    dist[r][c] = 0;
+
+                    queue.offer(r * W + c);
+                }
+            }
+        }
+
+        // Multi-source BFS
+        while (!queue.isEmpty()) {
+
+            int id = queue.poll();
+
+            int r = id / W;
+            int c = id % W;
+
+            // No need to explore beyond K
+            if (dist[r][c] == K) {
+                continue;
+            }
+
+            for (int d = 0; d < 4; d++) {
+
+                int nr = r + DR[d];
+                int nc = c + DC[d];
+
+                if (nr < 0 || nr >= H ||
+                    nc < 0 || nc >= W) {
+                    continue;
+                }
+
+                // Cannot move through bombs
+                if (grid[nr][nc] == '#') {
+                    continue;
+                }
+
+                // Already visited
+                if (dist[nr][nc] != -1) {
+                    continue;
+                }
+
+                dist[nr][nc] = dist[r][c] + 1;
+
+                queue.offer(nr * W + nc);
+            }
+        }
+
+        long answer = 0;
+
+        // Count cells that can reach a safe cell within K moves
+        for (int r = 0; r < H; r++) {
+            for (int c = 0; c < W; c++) {
+
+                if (grid[r][c] == '.'
+                        && dist[r][c] != -1
+                        && dist[r][c] <= K) {
+
+                    answer++;
+                }
+            }
+        }
+
+        System.out.println(answer);
+    }
+}
