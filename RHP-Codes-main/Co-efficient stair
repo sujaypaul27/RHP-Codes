@@ -1,0 +1,70 @@
+import java.io.*;
+import java.util.*;
+
+public class Main {
+
+    static int N;
+    static long K;
+
+    static long[] A;
+    static StringBuilder out = new StringBuilder();
+
+    static void dfs(int index, long sum) {
+
+        // All N values are chosen
+        if (index == N) {
+            if (sum == K) {
+                for (int i = 0; i < N; i++) {
+                    if (i > 0) out.append(' ');
+                    out.append(A[i]);
+                }
+                out.append('\n');
+            }
+            return;
+        }
+
+        /*
+         * We are choosing A[index].
+         *
+         * Current coefficient = index + 1
+         *
+         * Remaining value that can still be used:
+         * K - sum
+         *
+         * Therefore:
+         *
+         * A[index] <= (K - sum) / (index + 1)
+         */
+        long coefficient = index + 1;
+        long maxValue = (K - sum) / coefficient;
+
+        // Try smaller values first => lexicographical order
+        for (long x = 0; x <= maxValue; x++) {
+
+            A[index] = x;
+
+            dfs(
+                index + 1,
+                sum + coefficient * x
+            );
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+
+        BufferedReader br =
+                new BufferedReader(new InputStreamReader(System.in));
+
+        StringTokenizer st =
+                new StringTokenizer(br.readLine());
+
+        N = Integer.parseInt(st.nextToken());
+        K = Long.parseLong(st.nextToken());
+
+        A = new long[N];
+
+        dfs(0, 0);
+
+        System.out.print(out);
+    }
+}
