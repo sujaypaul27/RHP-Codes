@@ -1,0 +1,103 @@
+class Solution {
+
+    int[] parent;
+    int[] size;
+
+    int find(int x) {
+        if (parent[x] != x) {
+            parent[x] = find(parent[x]);
+        }
+        return parent[x];
+    }
+
+    void union(int a, int b) {
+        int pa = find(a);
+        int pb = find(b);
+
+        if (pa == pb) {
+            return;
+        }
+
+        // Union by size
+        if (size[pa] < size[pb]) {
+            int temp = pa;
+            pa = pb;
+            pb = temp;
+        }
+
+        parent[pb] = pa;
+        size[pa] += size[pb];
+    }
+
+    public int latestDayToCross(int row, int col, int[][] cells) {
+
+        int total = row * col;
+
+        // +2 for virtual TOP and BOTTOM nodes
+        parent = new int[total + 2];
+        size = new int[total + 2];
+
+        for (int i = 0; i < total + 2; i++) {
+            parent[i] = i;
+            size[i] = 1;
+        }
+
+        int TOP = total;
+        int BOTTOM = total + 1;
+
+        // 0 = water
+        // 1 = land
+        boolean[][] land = new boolean[row][col];
+
+        int[] dr = {-1, 1, 0, 0};
+        int[] dc = {0, 0, -1, 1};
+
+        // Process days backwards
+        for (int i = cells.length - 1; i >= 0; i--) {
+
+            int r = cells[i][0] - 1;
+            int c = cells[i][1] - 1;
+
+            land[r][c] = true;
+
+            int current = r * col + c;
+
+            // Connect with virtual TOP
+            if (r == 0) {
+                union(current, TOP);
+            }
+
+            // Connect with virtual BOTTOM
+            if (r == row - 1) {
+                union(current, BOTTOM);
+            }
+
+            // Connect with neighboring land cells
+            for (int d = 0; d < 4; d++) {
+
+                int nr = r + dr[d];
+                int nc = c + dc[d];
+
+                if (nr < 0 || nr >= row ||
+                    nc < 0 || nc >= col) {
+                    continue;
+                }
+
+                if (!land[nr][nc]) {
+                    continue;
+                }
+
+                int neighbor = nr * col + nc;
+
+                union(current, neighbor);
+            }
+
+            // Top and bottom are now connected
+            if (find(TOP) == find(BOTTOM)) {
+                return i;
+            }
+        }
+
+        return 0;
+    }
+}
